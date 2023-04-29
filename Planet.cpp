@@ -8,7 +8,7 @@ Planet::Planet() {
     description = "A familiar planet known for its rocky terrestrial surface and relative potential inhabitance by humans.";
     fuel_required = 50;
     hostility = 1;
-    size = "Small";
+    size = "small";
     size_mult = 1.2;
 
     elementName1 = "iron";
@@ -46,8 +46,8 @@ Planet::Planet(string userElementN1, string userElementN2, string userElementN3,
 void Planet::printInfo() {
     cout << "Planet name: " << name << endl;
     cout << "Description: " << description << endl;
-    cout << "Fuel required: " << fuel_required << endl;
-    cout << "Hostility: " << hostility << "/10" << endl;
+    cout << "Fuel recommended: " << fuel_required << endl;
+    cout << "Hostility: " << hostility << endl;
     cout << "Size: " << size << endl;
 }
 

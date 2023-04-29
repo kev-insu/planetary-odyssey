@@ -11,7 +11,7 @@ Game::Game() {
     firstRun = true;
 }
 
-Game::Game(int userCash, int userNumOdysseys, Spaceship userShip, bool userFirstRun) {
+Game::Game(double userCash, int userNumOdysseys, Spaceship userShip, bool userFirstRun) {
     cash = userCash;
     num_odysseys = userNumOdysseys;
     shipObject = userShip;
@@ -22,10 +22,10 @@ void Game::printStats() {
     cout << "Player Progress and Statistics:                               " << endl;
     cout << "   Cash: " << cash << endl;
     cout << "   Number of odysseys completed: " << num_odysseys << endl << endl;
-    shipObject.printInfo();
+    shipObject.printInfos();
 }
 
-int Game::getCash() {
+double Game::getCash() {
     return cash;
 }
 
@@ -41,7 +41,7 @@ bool Game::getFirstRun() {
     return firstRun;
 }
 
-void Game::setCash(int userCash) {
+void Game::setCash(double userCash) {
     cash = userCash;
 }
 

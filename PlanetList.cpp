@@ -48,7 +48,7 @@ void PlanetList::printPlanetList() {
         cout << "Name: " << planetList[index].get_name() << endl;
         cout << "Description: " << planetList[index].get_description() << endl;
         cout << "Fuel required: " << planetList[index].get_fuel_required() << endl;
-        cout << "Hostility: " << planetList[index].get_hostility() << "/10" << endl;
+        cout << "Hostility: " << planetList[index].get_hostility() << endl;
         cout << "Size: " << planetList[index].get_size() << endl << endl;
     }
 }
@@ -92,8 +92,8 @@ void PlanetList::printPlanetName(int index) {
 void PlanetList::printPlanetInfo(int index) {
     cout << "Name: " << planetList[index].get_name() << endl;
     cout << "Description: " << planetList[index].get_description() << endl;
-    cout << "Fuel required: " << planetList[index].get_fuel_required() << endl;
-    cout << "Hostility: " << planetList[index].get_hostility() << "/10" << endl;
+    cout << "Fuel recommended: " << planetList[index].get_fuel_required() << endl;
+    cout << "Hostility: " << planetList[index].get_hostility() << endl;
     cout << "Size: " << planetList[index].get_size() << endl << endl;
 }
 
