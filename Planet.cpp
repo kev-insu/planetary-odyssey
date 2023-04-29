@@ -5,7 +5,7 @@
 
 Planet::Planet() {
     name = "Mars";
-    description = "A familiar planet known for its rocky terrestrial surface and relative potential inhabitance by humans.";
+    description = "A small, orange, and terrestrial planet composed of iron, nickel, and sulfur.";
     fuel_required = 50;
     hostility = 1;
     size = "small";

@@ -8,17 +8,24 @@ using namespace std;
 
 class RandomEvent {
     protected:
-        int success_rate;
+        double success_rate;
         string description;
+        string success_description;
+        string failure_description;
         bool chosen_option;
     public:
         RandomEvent();
-        RandomEvent(int, string);
-        int get_success_rate();
+        RandomEvent(double, string, string, string);
+        double get_success_rate();
         string get_description();
+        string get_success_description();
+        string get_failure_description();
         bool get_chosen_option();
-        void set_success_rate(int);
+        void set_success_rate(double);
         void set_description(string);
+        void set_success_description(string);
+        void set_failure_description(string);
+
         void set_chosen_option(bool);
 };
 
