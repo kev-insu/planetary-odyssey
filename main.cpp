@@ -416,7 +416,7 @@ double gameRewards(Game& player, Planet selectedPlanet) {
     double baseReward = 10 * pow(2, selectedPlanet.get_hostility());
 
     string pSize = selectedPlanet.get_size();
-    double bonusHostility = pow(1.1, selectedPlanet.get_hostility());
+    double bonusHostility = pow(1.21, selectedPlanet.get_hostility());
     double bonusPSize = selectedPlanet.get_sizeMult();
 
     string element1 = selectedPlanet.getElementName1();
@@ -481,7 +481,8 @@ void gameOver(Game& player, string planet_name, bool& failState) {
 }
 
 void printFuelCrewProgressBar(Game player) {
-    cout << "Fuel / Crewmates: " << endl;
+    cout << "Fuel: " << player.getSpaceship().get_current_fuel() << "/" << player.getSpaceship().get_capacity_fuel() << endl;
+    cout << "Crew: " << player.getSpaceship().get_current_crew() << "/" << player.getSpaceship().get_capacity_crew() << endl;
     progressBar(player.getSpaceship().get_current_fuel(), player.getSpaceship().get_capacity_fuel());
     progressBar(player.getSpaceship().get_current_crew(), player.getSpaceship().get_capacity_crew());
 }
@@ -1010,7 +1011,7 @@ int main() {
                         outputBuffer();
                         }
                         else if (userShopSpaceshipOption > 0 && userShopSpaceshipOption < 9) {
-                            int shipIndex = userShopSpaceshipOption;
+                            int shipIndex = userShopSpaceshipOption - 1;
 
                             do {
                                 
@@ -1055,7 +1056,7 @@ int main() {
                             do {
                                 cout << "--------------------------------------------------------------" << endl;
                                 cout << "|| Enter the tier value of a Galactic Incarnate Supership   ||" << endl;
-                                cout << "|| you wish to buy (2 < x):                                 ||" << endl;
+                                cout << "|| you wish to buy (1 < x < 501):                           ||" << endl;
                                 cout << "--------------------------------------------------------------" << endl;
 
                                 cin >> userGIOption;
@@ -1066,9 +1067,9 @@ int main() {
                                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                                     outputBuffer();
                                 }
-                                else if (userGIOption < 2) {
+                                else if (userGIOption < 2 || userGIOption > 500) {
                                     cout << "--------------------------------------------------------------" << endl;
-                                    cout << "|| Error - please enter a value greater than 1.             ||" << endl;
+                                    cout << "|| Error - please enter a value with bounds 1 < x < 501.    ||" << endl;
                                     cin.clear();
                                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                                     outputBuffer();                                    
