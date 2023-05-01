@@ -6,7 +6,11 @@ command-line argument to run game:
 
     g++ -o main.exe main.cpp Spaceship.cpp Game.cpp Planet.cpp PlanetList.cpp RandomEvent.cpp ExplorationEvent.cpp
     .\main.exe
-    
+
+
+    fixed crewBonus by making the formula more precise
+    fixed crewLoss value for events at low values by using a floor function  
+
 v4.29.2023:
 
     finished base production of the game

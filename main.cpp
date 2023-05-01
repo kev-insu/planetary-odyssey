@@ -14,11 +14,30 @@
 #include "RandomEvent.h"
 #include "ExplorationEvent.h"
 
-
 using namespace std;
 
-template <typename T>
+void outputBuffer() {
+    string buffer;
+    cout << "|| Press any key to return.                                 ||" << endl;
+    cout << "--------------------------------------------------------------" << endl;
+    cin >> buffer;
+}
 
+void outputContBuffer() {
+    string buffer;
+    cout << "|| Press any key to continue.                               ||" << endl;
+    cout << "--------------------------------------------------------------" << endl;
+    cin >> buffer;
+}
+
+void progressBuffer() {
+    string buffer;
+    cout << "|| Press any key to roll and progress.                      ||" << endl;
+    cout << "--------------------------------------------------------------" << endl;
+    cin >> buffer;
+}
+
+template <typename T>
 void progressBar(T cur, T max) { // creates a progress bar with 2 percent increments per character
     T percentNum = (cur * 100) / max;
     int percent;
@@ -44,48 +63,6 @@ void progressBar(T cur, T max) { // creates a progress bar with 2 percent increm
     else {
         cout << "] " << ((cur * 100) / max) << "%" << endl;
     }
-}
-
-double logBase(double base, double num) {
-    return log(num) / log(base);
-}
-
-bool Proc(int hit, int total) {
-    if ((rand() % total) < hit) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-void uEventData(ExplorationEvent &mEvent, ExplorationEvent &sEvent) {
-    mEvent = ExplorationEvent(80.00, "You see the faint shadow of a martian looming in the distance.",
-    "The friendly martian greets you and offers you fuel and cash!", "The martian angrily lashes towards the spaceship and damages it.", "Mars", 1.1);
-    sEvent = ExplorationEvent(50.00, "A giant surfaces from the gaseous liquids of the planet.",
-    "The giant, gentle in its maneuver, grants you a gift.", "The giant grazes your spaceship with its inconcievably large hand.", "Saturn", 1.25);
-}
-
-RandomEvent createRandomEvent(Game player, Planet planet) {
-    RandomEvent tempEvent;
-    // create success rate;
-    double success = 40.0 + 60.0 * ((rand() % player.getSpaceship().get_ship_index()) / 500.0);
-    success *= .9 + ((double)(rand() % 21) / 100.0);
-    if (success > 100) {
-        success = 100.00;
-    }
-
-    int sizeRockType = 5;
-    string rockType[sizeRockType] = {"pebble", "boulder", "comet", "asteroid", "star"};
-    int randRockType = rand() % sizeRockType;
-    string impact = rockType[randRockType];
-    string description = "A(n) " + impact + " crashes into the " + planet.get_size() + " " + planet.get_name() + ".";
-    string success_description = "You successfully extracted the " + planet.get_size() + " " + impact + "'s treasures!";
-    string failure_description = "The " + impact + " explodes and hurts your mining crewmates as well as the ship.";
-
-    tempEvent = RandomEvent(success, description, success_description, failure_description);
-
-    return tempEvent;
 }
 
 void load(string filename, Game& player, bool& loaded) { // loads save data from a specified file
@@ -156,6 +133,19 @@ void save(string filename, Game& player) { // saves current in-game data to a sp
     outStream.close();
 }
 
+double logBase(double base, double num) {
+    return log(num) / log(base);
+}
+
+bool Proc(int hit, int total) {
+    if ((rand() % total) < hit) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 void spaceshipData(Spaceship ships[]) { // contains all data from purchasable spaceships
     ships[1] = Spaceship("Iron", 1000, 200, 22, 2);
     ships[2] = Spaceship("Bronze", 4000, 400, 33, 3);
@@ -193,6 +183,40 @@ double sellShip(Spaceship ship) { // calculates ship value from selling
     return cashReturned;
 }
 
+bool hasFuel(Game player) {
+    if (player.getSpaceship().get_current_fuel() == 0) {
+        cout << "--------------------------------------------------------------" << endl;
+        cout << "Please fuel up your spaceship before performing this action." << endl;
+        cout << endl;
+        outputBuffer();
+        return false;
+    }
+    return true;
+}
+
+bool hasCrew(Game player) {
+    if (player.getSpaceship().get_current_crew() == 0) {
+        cout << "--------------------------------------------------------------" << endl;
+        cout << "Please add crewmates to your spaceship before performing this action." << endl;
+        cout << endl;
+        outputBuffer();
+        return false;
+    }
+    return true;
+}
+
+bool hasEnoughCash(Game player, double cost) {
+    if (player.getCash() < cost) {
+        cout << "--------------------------------------------------------------" << endl;
+        cout << "You do not have enough cash." << endl;
+        cout << endl;
+        outputBuffer();
+        return false;
+    }
+
+    return true;
+}
+
 Spaceship calcuFuel(Spaceship ship, double num) { // adds or subtracts fuel
     double cur = ship.get_current_fuel();
     double calc = cur + num;
@@ -205,6 +229,29 @@ Spaceship calcuFuel(Spaceship ship, double num) { // adds or subtracts fuel
     }
 
     return tempShip;
+}
+
+Spaceship calcuCrew(Spaceship ship, int num) { // adds or subtracts crewmates
+    int cur = ship.get_current_crew();
+    int calc = cur + num;
+
+    Spaceship tempShip = ship;
+    tempShip.set_current_crew(cur + num);
+
+    if (cur + num < 0) {
+        tempShip.set_current_crew(0);
+    }
+
+    return tempShip;
+}
+
+double calcuCash(Game player, double num) { // adds or subtracts cash
+    double cur = player.getCash();
+    double calc = cur + num;
+
+    player.setCash(cur + num);
+
+    return player.getCash();
 }
 
 Spaceship calculateFuel(Spaceship ship, double num, bool& calcFuel) { // adds or subtracts fuel
@@ -231,21 +278,6 @@ Spaceship calculateFuel(Spaceship ship, double num, bool& calcFuel) { // adds or
     return tempShip;
 }
 
-Spaceship calcuCrew(Spaceship ship, int num) { // adds or subtracts crewmates
-    int cur = ship.get_current_crew();
-    int calc = cur + num;
-
-    Spaceship tempShip = ship;
-    tempShip.set_current_crew(cur + num);
-
-    if (cur + num < 0) {
-        tempShip.set_current_crew(0);
-    }
-
-    return tempShip;
-}
-
-
 Spaceship calculateCrew(Spaceship ship, int num, bool& calcCrew) { // adds or subtracts crewmates
     int cur = ship.get_current_crew();
     int calc = cur + num;
@@ -267,15 +299,6 @@ Spaceship calculateCrew(Spaceship ship, int num, bool& calcCrew) { // adds or su
     calcCrew = true;
 
     return tempShip;
-}
-
-double calcuCash(Game player, double num) { // adds or subtracts cash
-    double cur = player.getCash();
-    double calc = cur + num;
-
-    player.setCash(cur + num);
-
-    return player.getCash();
 }
 
 double calculateCash(Game player, double num, bool& calcCash) { // adds or subtracts cash
@@ -410,27 +433,6 @@ Planet createRandomPlanet(Game player) { // creates a random planet; over 960 mi
     return tempPlanet;
 }
 
-void outputBuffer() {
-    string buffer;
-    cout << "|| Press any key to return.                                 ||" << endl;
-    cout << "--------------------------------------------------------------" << endl;
-    cin >> buffer;
-}
-
-void outputContBuffer() {
-    string buffer;
-    cout << "|| Press any key to continue.                               ||" << endl;
-    cout << "--------------------------------------------------------------" << endl;
-    cin >> buffer;
-}
-
-void progressBuffer() {
-    string buffer;
-    cout << "|| Press any key to roll and progress.                      ||" << endl;
-    cout << "--------------------------------------------------------------" << endl;
-    cin >> buffer;
-}
-
 bool hasSpaceship(Game player) {
     if (player.getSpaceship().get_ship_name() == "None") {
         cout << "--------------------------------------------------------------" << endl;
@@ -440,109 +442,6 @@ bool hasSpaceship(Game player) {
         return false;
     }
     return true;
-}
-
-bool hasFuel(Game player) {
-    if (player.getSpaceship().get_current_fuel() == 0) {
-        cout << "--------------------------------------------------------------" << endl;
-        cout << "Please fuel up your spaceship before performing this action." << endl;
-        cout << endl;
-        outputBuffer();
-        return false;
-    }
-    return true;
-}
-
-bool hasCrew(Game player) {
-    if (player.getSpaceship().get_current_crew() == 0) {
-        cout << "--------------------------------------------------------------" << endl;
-        cout << "Please add crewmates to your spaceship before performing this action." << endl;
-        cout << endl;
-        outputBuffer();
-        return false;
-    }
-    return true;
-}
-
-bool hasEnoughCash(Game player, double cost) {
-    if (player.getCash() < cost) {
-        cout << "--------------------------------------------------------------" << endl;
-        cout << "You do not have enough cash." << endl;
-        cout << endl;
-        outputBuffer();
-        return false;
-    }
-
-    return true;
-}
-
-double gameRewards(Game& player, Planet selectedPlanet) {
-    cout << setprecision(2);
-    double baseReward = 10 * pow(2, selectedPlanet.get_hostility());
-
-    string pSize = selectedPlanet.get_size();
-    double bonusHostility = pow(1.21, selectedPlanet.get_hostility());
-    double bonusPSize = selectedPlanet.get_sizeMult();
-
-    string element1 = selectedPlanet.getElementName1();
-    string element2 = selectedPlanet.getElementName2();
-    string element3 = selectedPlanet.getElementName3();
-    double elementMult1 = selectedPlanet.getElementMult1();
-    double elementMult2 = selectedPlanet.getElementMult2();
-    double elementMult3 = selectedPlanet.getElementMult3();
-
-    // double bonusSTBase2 = player.getSpaceship().get_capacity_fuel() / 100;
-    // double bonusShipPower = logBase(2, bonusSTBase2) + 1;
-    double bonusShipType = pow(1.1, player.getSpaceship().get_ship_index());
-
-    double bonusCrewmates = 1 + (player.getSpaceship().get_current_crew() / 10);
-    double bonusOdysseys = 1 + log((double)player.getNumOdysseys() / 10 + 1);
-
-    double totalMultiplier = bonusHostility * bonusPSize * bonusShipType * bonusCrewmates * bonusOdysseys;
-    double cashEarned = baseReward * totalMultiplier;
-    cout << "Rewards from planet " << selectedPlanet.get_name() << ":" << endl
-         << "            Base reward: " << baseReward << " cash" << endl << endl
-
-         << "        Hostility bonus: x" << bonusHostility << endl
-         << "      Planet size bonus: x" << bonusPSize << " - " << pSize << endl
-         << "         Elements bonus: x" << elementMult1 << " - " << element1 << endl
-         << "                         x" << elementMult2 << " - " << element2 << endl
-         << "                         x" << elementMult3 << " - " << element3 << endl << endl
-
-         << "        Ship type bonus: x" << bonusShipType << endl
-         << "        Crewmates bonus: x" << bonusCrewmates << endl
-         << "Odysseys explored bonus: x" << bonusOdysseys << " - (" << player.getNumOdysseys() << ")" << endl << endl
-
-         << "       Total multiplier: x" << totalMultiplier << endl << endl;
-
-    outputContBuffer();
-    
-    player.setNumOdysseys(player.getNumOdysseys() + 1);
-
-    return cashEarned;
-}
-
-void gameOver(Game& player, string planet_name, bool& failState) {
-    if (player.getSpaceship().get_current_fuel() == 0 && player.getSpaceship().get_current_crew() == 0) {
-        cout << "|| Game over. You ran out of fuel and crewmates.            ||" << endl;
-    }
-
-    else if (player.getSpaceship().get_current_fuel() == 0) {
-        cout << "|| Game over. You ran out of fuel.                          ||" << endl;
-        }
-
-    else if (player.getSpaceship().get_current_crew() == 0) {
-        cout << "|| Game over. You ran out of crewmates.                     ||" << endl;
-    }
-    cout << endl;
-    cout << "Your spaceship has crashed and you are stranded on " << planet_name << "." << endl;
-    cout << "Please buy a new spaceship or start a new game if out of money." << endl;
-    cout << endl;
-
-    player.setSpaceship(Spaceship("None", 0, 0, 0, 0));
-    failState = true;
-
-    outputBuffer();
 }
 
 void printFuelCrewProgressBar(Game player) {
@@ -562,6 +461,35 @@ void printAllStats(Game player) {
     }
 
     cout << endl;
+}
+
+void uEventData(ExplorationEvent &mEvent, ExplorationEvent &sEvent) {
+    mEvent = ExplorationEvent(80.00, "You see the faint shadow of a martian looming in the distance.",
+    "The friendly martian greets you and offers you fuel and cash!", "The martian angrily lashes towards the spaceship and damages it.", "Mars", 1.1);
+    sEvent = ExplorationEvent(50.00, "A giant surfaces from the gaseous liquids of the planet.",
+    "The giant, gentle in its maneuver, grants you a gift.", "The giant grazes your spaceship with its inconcievably large hand.", "Saturn", 1.25);
+}
+
+RandomEvent createRandomEvent(Game player, Planet planet) {
+    RandomEvent tempEvent;
+    // create success rate;
+    double success = 40.0 + 60.0 * ((rand() % player.getSpaceship().get_ship_index()) / 500.0);
+    success *= .9 + ((double)(rand() % 21) / 100.0);
+    if (success > 100) {
+        success = 100.00;
+    }
+
+    int sizeRockType = 5;
+    string rockType[sizeRockType] = {"pebble", "boulder", "comet", "asteroid", "star"};
+    int randRockType = rand() % sizeRockType;
+    string impact = rockType[randRockType];
+    string description = "A(n) " + planet.get_size() + " " + impact + " crashes into " + planet.get_name() + ".";
+    string success_description = "You successfully extracted the " + planet.get_size() + " " + impact + "'s treasures!";
+    string failure_description = "The " + impact + " explodes and hurts your mining crewmates as well as the ship.";
+
+    tempEvent = RandomEvent(success, description, success_description, failure_description);
+
+    return tempEvent;
 }
 
 void EventCalc(Game &player, Planet planet, double &pCur, double &pMax, ExplorationEvent mEvent, ExplorationEvent sEvent) {
@@ -654,13 +582,13 @@ void EventCalc(Game &player, Planet planet, double &pCur, double &pMax, Explorat
 
     if (calcSuccess) {
         double curFuel = player.getSpaceship().get_current_fuel();
-        double fuelGain = player.getSpaceship().get_capacity_fuel() * (double)pow(.95, player.getSpaceship().get_ship_index()) * ((double(80) + rand() % 41) / 100.0) * 0.05;
+        double fuelGain = player.getSpaceship().get_capacity_fuel() * (double)pow(.95, player.getSpaceship().get_ship_index()) * ((double(80) + rand() % 41) / 100.0) * 0.025;
         if (fuelGain + curFuel > player.getSpaceship().get_capacity_fuel()) {
             fuelGain = player.getSpaceship().get_capacity_fuel() - curFuel;
         }
         player.setSpaceship(calcuFuel(player.getSpaceship(), fuelGain * uPlanetMult));
 
-        int cashGain = player.getSpaceship().get_capacity_fuel() * (double)pow(.95, player.getSpaceship().get_ship_index()) * ((double(80) + rand() % 41) / 100.0) * .50;
+        double cashGain = 1000.0 * (double)pow(4, player.getSpaceship().get_ship_index() - 2) * ((double(80) + rand() % 41) / 100.0) * .04;
         player.setCash(calcuCash(player, cashGain));
 
         cout << success_d << endl;
@@ -672,8 +600,9 @@ void EventCalc(Game &player, Planet planet, double &pCur, double &pMax, Explorat
     else {
         double curFuel = player.getSpaceship().get_current_fuel();
         int curCrew = player.getSpaceship().get_current_crew();
-        double fuelLoss = -player.getSpaceship().get_capacity_fuel() * (double)pow(.95, player.getSpaceship().get_ship_index()) * ((double(80) + rand() % 41) / 100.0) * 0.03;
-        int crewLoss = -player.getSpaceship().get_capacity_crew() * (double)pow(.95, player.getSpaceship().get_ship_index()) * ((double(80) + rand() % 41) / 100.0) * 0.05;
+        double fuelLoss = -player.getSpaceship().get_capacity_fuel() * (double)pow(.95, player.getSpaceship().get_ship_index()) * ((double(80) + rand() % 41) / 100.0) * 0.05;
+        int crewLoss = floor((double)-player.getSpaceship().get_capacity_crew() * (double)pow(.95, player.getSpaceship().get_ship_index()) * ((double(80) + rand() % 41) / 100.0) * 0.05);
+
         if (abs(fuelLoss) > curFuel) {
             fuelLoss = curFuel;
         }
@@ -699,10 +628,77 @@ void EventCalc(Game &player, Planet planet, double &pCur, double &pMax, Explorat
     outputContBuffer();
 }
 
+double gameRewards(Game& player, Planet selectedPlanet) {
+    cout << setprecision(2);
+    double baseReward = 10 * pow(2, selectedPlanet.get_hostility());
+
+    string pSize = selectedPlanet.get_size();
+    double bonusHostility = pow(1.21, selectedPlanet.get_hostility());
+    double bonusPSize = selectedPlanet.get_sizeMult();
+
+    string element1 = selectedPlanet.getElementName1();
+    string element2 = selectedPlanet.getElementName2();
+    string element3 = selectedPlanet.getElementName3();
+    double elementMult1 = selectedPlanet.getElementMult1();
+    double elementMult2 = selectedPlanet.getElementMult2();
+    double elementMult3 = selectedPlanet.getElementMult3();
+
+    // double bonusSTBase2 = player.getSpaceship().get_capacity_fuel() / 100;
+    // double bonusShipPower = logBase(2, bonusSTBase2) + 1;
+    double bonusShipType = pow(1.1, player.getSpaceship().get_ship_index());
+
+    double bonusCrewmates = 1 + (player.getSpaceship().get_current_crew() / 10.0);
+    double bonusOdysseys = 1 + log((double)player.getNumOdysseys() / 10 + 1);
+
+    double totalMultiplier = bonusHostility * bonusPSize * bonusShipType * bonusCrewmates * bonusOdysseys;
+    double cashEarned = baseReward * totalMultiplier;
+    cout << "Rewards from planet " << selectedPlanet.get_name() << ":" << endl
+         << "            Base reward: " << baseReward << " cash" << endl << endl
+
+         << "        Hostility bonus: x" << bonusHostility << endl
+         << "      Planet size bonus: x" << bonusPSize << " - " << pSize << endl
+         << "         Elements bonus: x" << elementMult1 << " - " << element1 << endl
+         << "                         x" << elementMult2 << " - " << element2 << endl
+         << "                         x" << elementMult3 << " - " << element3 << endl << endl
+
+         << "        Ship type bonus: x" << bonusShipType << endl
+         << "        Crewmates bonus: x" << bonusCrewmates << endl
+         << "Odysseys explored bonus: x" << bonusOdysseys << " - (" << player.getNumOdysseys() << ")" << endl << endl
+
+         << "       Total multiplier: x" << totalMultiplier << endl << endl;
+
+    outputContBuffer();
+    
+    player.setNumOdysseys(player.getNumOdysseys() + 1);
+
+    return cashEarned;
+}
+
+void gameOver(Game& player, string planet_name, bool& failState) {
+    if (player.getSpaceship().get_current_fuel() == 0 && player.getSpaceship().get_current_crew() == 0) {
+        cout << "|| Game over. You ran out of fuel and crewmates.            ||" << endl;
+    }
+
+    else if (player.getSpaceship().get_current_fuel() == 0) {
+        cout << "|| Game over. You ran out of fuel.                          ||" << endl;
+        }
+
+    else if (player.getSpaceship().get_current_crew() == 0) {
+        cout << "|| Game over. You ran out of crewmates.                     ||" << endl;
+    }
+    cout << endl;
+    cout << "Your spaceship has crashed and you are stranded on " << planet_name << "." << endl;
+    cout << "Please buy a new spaceship or start a new game if out of money." << endl;
+    cout << endl;
+
+    player.setSpaceship(Spaceship("None", 0, 0, 0, 0));
+    failState = true;
+
+    outputBuffer();
+}
+
 int main() {
     srand(time(0));
-
-    cout << scientific;
 
     string filename;
     bool loaded;

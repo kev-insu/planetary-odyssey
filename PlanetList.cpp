@@ -12,22 +12,25 @@ PlanetList::PlanetList() {
     num_planets = 0;
 }
 PlanetList::PlanetList(int num) {
+    num_planets = 0;
+
     if (num <= 0) {
         max_planets = 0;
         planetList = nullptr;
     }
+
     else {
         max_planets = num;
         planetList = new Planet[max_planets];
     }
 
-    num_planets = 0;
 }
 
 bool PlanetList::planetAdd(Planet planet) {
     if (num_planets >= max_planets) {
         return false;
     }
+
     else {
         planetList[num_planets] = planet;
         num_planets++;
@@ -38,6 +41,7 @@ bool PlanetList::planetRemove(int index) {
     for (int i = index; i < num_planets - 1; i++) {
         planetList[i] = planetList[i + 1];
     }
+
     num_planets -= 1;
     return true;
 }
@@ -66,6 +70,7 @@ PlanetList::~PlanetList() {
     if (planetList == nullptr) {
         cout << "|| Memory is released.                                      ||" << endl;
     }
+    
     else {
         cout << "|| Memory was not able to be released.                   ||" << endl;
         delete[] planetList;
